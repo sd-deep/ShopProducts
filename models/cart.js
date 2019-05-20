@@ -37,20 +37,22 @@ module.exports = class Cart {
     }
     
     static deleteProduct(id, productPrice){
-        console.log('inside the cart')
+        
         fs.readFile(fileLocation, (err,fileContent)=>{
             if(err){
                 return;
             }
             const cart = JSON.parse(fileContent);
-            console.log('got the cart')
+            
             const updatedCart = {...cart}
             const product = updatedCart.products.find(prod => prod.id === id)
-            console.log('found the product to delete')
+            if(!product){
+                return;
+            }
             const productQty = product.qty;
             updatedCart.totalPrice = updatedCart.totalPrice - productPrice * productQty;
             updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
-            console.log('filtering the cart')
+            
             fs.writeFile(fileLocation, JSON.stringify(updatedCart) , err =>{
                 if(err){
                     console.log(err)
@@ -59,4 +61,17 @@ module.exports = class Cart {
         });
 
     } 
+
+    static getCart(callBack){
+        fs.readFile(fileLocation, (err, fileContent) =>{
+            const cart = JSON.parse(fileContent)
+            if(err){
+                
+                callBack(null);
+            }
+            else{
+                callBack(cart)
+            }
+        })
+    }
 }

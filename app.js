@@ -28,4 +28,4 @@ app.use(shopRoutes);
 
 app.use(errorController.getErrorPage);
 
-app.listen(3000);
+app.listen(3002);
