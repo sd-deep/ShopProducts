@@ -149,6 +149,14 @@ form {
   text-align: center;
 }
 
+.image {
+  height: 20rem;
+}
+
+.image img {
+  height: 100%;
+}
+
 .card__header,
 .card__content {
   padding: 1rem;
