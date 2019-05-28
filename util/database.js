@@ -3,12 +3,12 @@ const MongoClient = mongodb.MongoClient;
 
 let _db;
 
-const mongoConnect = () =>{
-    MongoClient.connect("mongodb+srv://deep:xOe6p6SKJVHDY5Tx@cluster0-exmnw.mongodb.net/shop?retryWrites=true")
+const mongoConnect = (callBack) =>{
+    MongoClient.connect("mongodb+srv://deep:xOe6p6SKJVHDY5Tx@cluster0-exmnw.mongodb.net/shop?retryWrites=true",{ useNewUrlParser: true })
   .then(client =>{
       console.log('Connected!');
       _db = client.db();
-      callBack();
+      callBack( )
       
   })
   .catch(err => {

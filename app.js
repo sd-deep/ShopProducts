@@ -4,6 +4,8 @@ const express = require('express');
 
 const mongoConnect = require('./util/database').mongoConnect;
 
+const User = require('./models/user')
+
 const errorController = require('./controllers/error')
 
 const bodyParser = require('body-parser');
@@ -22,20 +24,16 @@ app.set('views', 'views')
 
 
 app.use((req,res,next)=>{
-   /*  User.findByPk(1)
+   User.findUserById('5ce8436ec944bc1af43670c0')
     .then(user=>{
-        req.user = user;
+        req.user = new User(user.name,user.email,user.cart,user._id);
         next();
     })
     .catch(err=>{
         console.log(err)
-    }) */
-    next()
+    }) 
+    
 })
-
-
-
-
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
