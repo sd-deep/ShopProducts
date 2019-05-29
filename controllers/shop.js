@@ -63,7 +63,7 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then(product => {
-      req.user.addToCart(product);
+      return req.user.addToCart(product);
     })
     .then(result => {
       res.redirect("/cart");
@@ -83,12 +83,15 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
+  
   req.user
     .populate("cart.items.productId")
     .execPopulate()
     .then(user => {
+      console.log('inside the populate')
       const cartProducts = user.cart.items.map(i => {
-        return { quantity: i.quantity, product: { ...i.productId._doc } };
+        console.log('inside product details fetching')
+        return {  product: { ...i.productId._doc }, quantity: i.quantity };
       });
       const order = new Order({
         user: {
