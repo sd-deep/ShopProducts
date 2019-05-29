@@ -85,10 +85,7 @@ exports.postOrder = (req, res, next) => {
   req.user.addOrder()
   .then(results =>{
 
-    res.render('shop/orders', {
-      path: '/orders',
-      pageTitle: 'Your Orders'
-    });
+    res.redirect('/orders');
   }).catch(err=>{
     console.log('err in getorders'+err)
   })
