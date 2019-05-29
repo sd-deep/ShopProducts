@@ -13,9 +13,15 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(title, price, description, imageUrl, null, req.user._id);
+  const product = new Product({
+    title : title,
+    imageUrl : imageUrl,
+    price : price,
+    description : description,
+    userId : req.user // mongoose will pick the _id from the object and assign --> explicitly req.user._id
+  });
   product
-    .save()
+    .save()// save method provided by mongoose
     .then(result => {
       console.log(result);
       res.redirect("/admin/products");
@@ -32,7 +38,7 @@ exports.getEditProduct = (req, res, next) => {
   }
   const prodId = req.params.productId;
   //Product.findByPk(prodId)
-  Product.findById(prodId)
+  Product.findById(prodId) // findById prodived by mongoose
     .then(product => {
       if (!product) {
         return res.redirect("/");
@@ -56,15 +62,13 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
   const userId = req.user._id
-  const updatedProduct = new Product(
-    updatedTitle,
-    updatedPrice,
-    updatedDesc,
-    updatedImageUrl,
-    prodId,
-    userId
-  );
-  updatedProduct.save()
+  Product.findById(prodId).then(product =>{
+    product.title = updatedTitle;
+    product.price = updatedPrice;
+    product.description = updatedDesc;
+    product.imageUrl = updatedImageUrl;
+    return product.save()
+  })
     .then(result => {
       console.log("Product Updated");
       res.redirect("/admin/products");
@@ -75,8 +79,8 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  //Product.findAll()
-  Product.fetchAll()
+  Product.find() // find() -> mongoose method
+  // .select and .populate 
     .then(products => {
       res.render("admin/products", {
         prods: products,
@@ -91,7 +95,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-    Product.deleteById(prodId)
+    Product.findByIdAndRemove(prodId) // findByIdAndremove -> mongoose static method
     .then(result => {
       console.log("Product deleted!!");
       res.redirect("/admin/products");
