@@ -5,21 +5,29 @@ const express = require("express");
 //const mongoConnect = require('./util/database').mongoConnect;
 const mongoose = require("mongoose");
 
-const User = require("./models/user");
+const bodyParser = require("body-parser");
+const session = require('express-seesion');
+const MongoDbStore = require('connect-mongodb-session')(session)
 
 const errorController = require("./controllers/error");
-
-const bodyParser = require("body-parser");
-
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
+const User = require("./models/user");
+
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
+const store = new MongoDbStore({
+  uri : MONGODB_URI,
+  cllection : 'sessions'
+})
 
+const MONGODB_URI = "mongodb+srv://deep:xOe6p6SKJVHDY5Tx@cluster0-exmnw.mongodb.net/shop"
+
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(session({secrect:'some secrect string', resave : false, saveUnitialized:false, store : store}))
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -44,7 +52,7 @@ app.use(errorController.getErrorPage);
 
 mongoose
   .connect(
-    "mongodb+srv://deep:xOe6p6SKJVHDY5Tx@cluster0-exmnw.mongodb.net/shop?retryWrites=true"
+    MONGODB_URI
   )
   .then(result => {
     User.findOne().then(user=>{
