@@ -4,7 +4,8 @@ exports.getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
-    editing: false
+    editing: false,
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -18,7 +19,7 @@ exports.postAddProduct = (req, res, next) => {
     imageUrl : imageUrl,
     price : price,
     description : description,
-    userId : req.user // mongoose will pick the _id from the object and assign --> explicitly req.user._id
+    userId : req.session.user // mongoose will pick the _id from the object and assign --> explicitly req.user._id
   });
   product
     .save()// save method provided by mongoose
@@ -47,7 +48,8 @@ exports.getEditProduct = (req, res, next) => {
         pageTitle: "Edit Product",
         path: "/admin/edit-product",
         editing: editMode,
-        product: product
+        product: product,
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => {
@@ -61,7 +63,6 @@ exports.postEditProduct = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  const userId = req.user._id
   Product.findById(prodId).then(product =>{
     product.title = updatedTitle;
     product.price = updatedPrice;
@@ -85,7 +86,8 @@ exports.getProducts = (req, res, next) => {
       res.render("admin/products", {
         prods: products,
         pageTitle: "Admin products",
-        path: "/admin/products"
+        path: "/admin/products",
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => {
