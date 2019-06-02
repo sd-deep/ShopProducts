@@ -21,15 +21,39 @@ const MONGODB_URI = "mongodb+srv://deep:xOe6p6SKJVHDY5Tx@cluster0-exmnw.mongodb.
 const app = express();
 
 const store = new MongoDbStore({
-  uri : MONGODB_URI,
-  collection : 'sessions'
+  uri: MONGODB_URI,
+  collection: 'sessions'
 })
 
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(session({secret:'some secret string', resave : false, saveUninitialized:false, store : store}))
+app.use(
+  session(
+    {
+      secret: 'some secret string',
+      resave: false,
+      saveUninitialized: false,
+      store: store
+    }))
+
+
+app.use((req,res,next)=>{
+  if(!req.session.user){
+    return next();
+    
+  }
+  User.findById(req.session.user._id)
+        .then(user => {
+            req.user = user;
+            next()
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
+})
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -47,19 +71,19 @@ mongoose
     MONGODB_URI
   )
   .then(result => {
-    User.findOne().then(user=>{
-        if(!user){
-            const user = new User({
-                name: "deep",
-                email: "shankhadeepdas8@gmail.com",
-                cart: {
-                  item: []
-                }
-              });
-              user.save();
-        }
-    }) 
-    
+    User.findOne().then(user => {
+      if (!user) {
+        const user = new User({
+          name: "deep",
+          email: "shankhadeepdas8@gmail.com",
+          cart: {
+            item: []
+          }
+        });
+        user.save();
+      }
+    })
+
     app.listen(3000);
   })
   .catch(err => {

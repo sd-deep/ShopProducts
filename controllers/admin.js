@@ -19,7 +19,7 @@ exports.postAddProduct = (req, res, next) => {
     imageUrl : imageUrl,
     price : price,
     description : description,
-    userId : req.session.user // mongoose will pick the _id from the object and assign --> explicitly req.user._id
+    userId : req.user // mongoose will pick the _id from the object and assign --> explicitly req.user._id
   });
   product
     .save()// save method provided by mongoose
