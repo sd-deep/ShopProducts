@@ -1,15 +1,13 @@
 const path = require("path");
 
 const express = require("express");
-
 //const mongoConnect = require('./util/database').mongoConnect;
 const mongoose = require("mongoose");
-
 const csrf = require('csurf');
-
 const bodyParser = require("body-parser");
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session)
+const flash = reqquire('connect-flash')
 
 const errorController = require("./controllers/error");
 const adminRoutes = require("./routes/admin");
@@ -40,7 +38,8 @@ app.use(
       store: store
     }))
 
-app.use(csrfProtection)
+app.use(csrfProtection);
+app.use(flash());
 
 
 app.use((req,res,next)=>{
