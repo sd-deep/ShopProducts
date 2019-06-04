@@ -35,7 +35,7 @@ exports.postLogin = (req, res, next) => {
     User.findOne({ email: email })
         .then(user => {
             if (!user) {
-                req.flash({ error: "Invalid email or password!!" });
+                req.flash('error', "Invalid email or password!!" );
                 return res.redirect("/login");
             }
             bcrypt.compare(password, user.password).then(doMatch => {
@@ -48,7 +48,7 @@ exports.postLogin = (req, res, next) => {
                         res.redirect("/");
                     });
                 }
-                req.flash({ error: "Invalid email or password!!" });
+                req.flash('error',"Invalid email or password!!" );
                 return res.redirect("/login");
             });
         })
@@ -139,11 +139,13 @@ exports.postReset = (req, res, next) => {
             return res.redirect("/reset");
         }
         const token = buffer.toString("hex");
+        console.log(token)
+        
         User.findOne({ email: email })
             .then(user => {
+                console.log('finding user in db')
                 if (!user) {
-                    req.flash({ error: "No account with that email address found!" });
-                    return res.redirect("/reset");
+                    throw "No account with that email found!"
                 }
                 user.resetToken = token;
                 user.resetTokenExpiration = Date.now() + 3600000;
@@ -153,14 +155,15 @@ exports.postReset = (req, res, next) => {
                 res.redirect("/");
                 transporter.sendMail({
                     to: email,
-                    from: "node-shopping@learning.com",
+                    from: "node-shopping@shankhadeep.com",
                     subject: "Password Reset request",
                     html: `<p>You requested for a password reset</p>
                 <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password </p>`
                 });
             })
             .catch(err => {
-                console.log(err);
+                req.flash('error', err );
+                return res.redirect("/reset");
             });
     });
 };
