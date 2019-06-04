@@ -7,7 +7,7 @@ const csrf = require('csurf');
 const bodyParser = require("body-parser");
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session)
-const flash = reqquire('connect-flash')
+const flash = require('connect-flash')
 
 const errorController = require("./controllers/error");
 const adminRoutes = require("./routes/admin");
