@@ -4,5 +4,5 @@ exports.getErrorPage = (req, res, next) => {
 //there has been changes here
 
 exports.get500Error = (req, res, next) => {
-    res.status(500).render('500', {pageTitle : 'Inter server error',path:'/500',isAuthenticated : req.session});
+    res.status(500).render('500', {pageTitle : 'Internal server error',path:'/500',isAuthenticated : req.session});
 }
